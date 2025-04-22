@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}articles{% endblock %}
+
+{% block body %}
+    <h1>Liste des articles </h1>
+    <section>
+      {% if articles is null %}
+        <h2>Il n'y a pas d'articles en BDD</h2>
+      {% else %}
+        {% for article in articles %}
+
+        <article class="block rounded-md border border-gray-300 p-4 shadow-sm sm:p-6" id="{{ article.id }}">
+            <div class="sm:flex sm:justify-between sm:gap-4 lg:gap-6">          
+              <div class="mt-4 sm:mt-0">
+                <h3 class="text-lg font-medium text-pretty text-gray-900">
+                    {{ article.title }}
+                </h3>
+                <p class="text-lg font-medium text-pretty text-gray-900">
+                    {{ article.content }}
+                </p>
+                <p class="text-lg font-medium text-pretty text-gray-900">
+                    {{ article.createdAt|date('d-m-Y') }}
+                </p>
+                <p class="text-lg font-medium text-pretty text-gray-900">
+                    {{ article.user.firstname }} {{ article.user.lastname }}
+                </p>
+                <p> Categories : 
+                    {% for category in article.categories %}
+                        <span class="text-lg font-medium text-pretty text-gray-900">
+                            {{ category.label }}
+                        </span>
+                        {% if loop.last == false %}
+                            <span> - </span>
+                        {% endif %}
+                    {% endfor %}
+                </p>
+              </div>
+            </div>
+        </article>
+        {% endfor %}
+      {% endif %}
+        
+    </section>
+{% endblock %}
