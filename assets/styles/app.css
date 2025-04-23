@@ -5,3 +5,17 @@
 main {
     min-height: 50vh;
 }
+
+#user {
+    &>div {
+        margin: 1em;
+        & * {
+            margin-right: 0.5em;
+        }
+    }
+    & input[type='email'],
+    & input[type='password'],
+    & input[type='text'] {
+        background-color: lightgray;
+    }
+}

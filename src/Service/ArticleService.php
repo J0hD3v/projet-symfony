@@ -54,7 +54,7 @@ final class ArticleService{
             // Ajouter en BDD
             // ...
 
-        } catch (\Throwable $e) {
+        } catch (\Exception $e) {
             throw new \Exception($e->getMessage());
         }
     }
