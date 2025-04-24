@@ -6,7 +6,8 @@ main {
     min-height: 50vh;
 }
 
-#user {
+#user,
+#weather {
     &>div {
         margin: 1em;
         & * {

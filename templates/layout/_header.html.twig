@@ -16,7 +16,7 @@
             <li>
               <a
                 class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                href="#"
+                href="/home"
               >
                 Accueil
               </a>
@@ -25,29 +25,36 @@
             <li>
               <a
                 class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                href="#"
+                href="/article"
               >
-                Presentation
+                Articles
               </a>
             </li>
   
             <li>
               <a
                 class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                href="#"
+                href="/user"
               >
-                Prix
+                Utilisateurs
               </a>
             </li>
   
-            <li>
-              <a
-                class="text-gray-500 transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75"
-                href="#"
-              >
-                A propos
-              </a>
+            <li class="relative">
+              <details class="relative">
+                  <summary class="text-gray-500 flex transition hover:text-gray-500/75 dark:text-white dark:hover:text-white/75 cursor-pointer list-none">
+                      API Météo
+                      <svg class="-mr-1 size-5 text-gray-400" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-slot="icon">
+                        <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                      </svg>
+                  </summary>
+                  <div class="absolute left-0 mt-2 py-2 bg-white rounded-md shadow-lg w-48">
+                      <a href="/weather" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Météo Toulouse</a>
+                      <a href="/weather/bycity" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Recherche par ville</a>
+                  </div>
+              </details>
             </li>
+            
           </ul>
         </nav>
   
@@ -55,7 +62,7 @@
           <div class="sm:flex sm:gap-4">
             <a
               class="block rounded-md bg-teal-600 px-5 py-2.5 text-sm font-medium text-white transition hover:bg-teal-700 dark:hover:bg-teal-500"
-              href="#"
+              href="/login"
             >
               Login
             </a>
