@@ -1,47 +1,97 @@
-name: Test & Deploy to Netlify
+name: Symfony 7 + Cypress E2E Tests
 
 on:
+  workflow_dispatch:  # permet de le lancer manuellement
   push:
-    branches: [main]
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
-  test:
+  Symfony-test:
     runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: mysql://root:root@127.0.0.1:3306/symfonyDb
+
+    services:
+      mysql:
+        image: mysql:8.0
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: symfonyDb
+        ports:
+          - 3306:3306
+        options: >-
+          --health-cmd="mysqladmin ping -h 127.0.0.1 --silent"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=10
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
+      - name: Install netcat
+        run: sudo apt-get update && sudo apt-get install -y netcat-openbsd
+
+      - name: Wait for MySQL
+        run: |
+          for i in {1..15}; do
+            nc -z 127.0.0.1 3306 && echo "MySQL is up" && break
+            echo "Waiting for MySQL..."
+            sleep 2
+          done
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
         with:
-          node-version: 18
+          php-version: "8.2"
+          extensions: mbstring, intl, pdo_mysql, sodium
+          tools: composer
 
-      - name: Install dependencies
-        run: npm install
+      - name: Set up .env for CI
+        run: |
+          cp .env .env.test
+          echo "APP_ENV=test" >> .env
+          echo "APP_ENV=test" >> .env.test
+          echo "DATABASE_URL=${{ env.DATABASE_URL }}" >> .env.test
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run DB migrations
+        run: |
+          php bin/console doctrine:database:create --if-not-exists
+          php bin/console doctrine:migrations:migrate --no-interaction
+
+      - name: Start Symfony server
+        run: |
+          php -S 127.0.0.1:8084 -t public &
 
       - name: Run Cypress tests
         uses: cypress-io/github-action@v6
         with:
-          start: npm run dev
-          wait-on: http://localhost:3000
+          # start: php -S 127.0.0.1:8000 -t public
+          wait-on: 'http://127.0.0.1:8084'
+          wait-on-timeout: 60
 
-  deploy:
-    needs: test
-    runs-on: ubuntu-latest
+deploy:
+  needs: test
+  runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+  steps:
+    - name: 🔄 Cloner le code
+      uses: actions/checkout@v3
 
-      - name: Install Netlify CLI
-        run: npm install -g netlify-cli
+    - name: 🏗️ Builder le projet
+      run: npm run build
 
-      - name: Build site
-        run: npm run build
-
-      - name: Deploy to Netlify
-        env:
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-        run: netlify deploy --prod --dir=dist --site=$NETLIFY_SITE_ID
+    - name: 📤 Déployer via FTP
+      uses: sebastianpopp/ftp-action@releases/v2
+      with:
+        host: ${{ secrets.FTP_HOST }}
+        username: ${{ secrets.FTP_USERNAME }}
+        password: ${{ secrets.FTP_PASSWORD }}
+        localDir: ./dist
+        remoteDir: /public_html/johan
