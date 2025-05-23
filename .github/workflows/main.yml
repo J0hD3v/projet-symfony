@@ -76,22 +76,22 @@ jobs:
           wait-on: 'http://127.0.0.1:8084'
           wait-on-timeout: 60
 
-deploy:
-  needs: Symfony-test
-  runs-on: ubuntu-latest
+  deploy:
+    needs: Symfony-test
+    runs-on: ubuntu-latest
 
-  steps:
-    - name: 🔄 Cloner le code
-      uses: actions/checkout@v3
+    steps:
+      - name: 🔄 Cloner le code
+        uses: actions/checkout@v3
 
-    - name: 🏗️ Builder le projet
-      run: npm run build
+      - name: 🏗️ Builder le projet
+        run: npm run build
 
-    - name: 📤 Déployer via FTP
-      uses: sebastianpopp/ftp-action@releases/v2
-      with:
-        host: ${{ secrets.FTP_HOST }}
-        username: ${{ secrets.FTP_USERNAME }}
-        password: ${{ secrets.FTP_PASSWORD }}
-        localDir: ./dist
-        remoteDir: /public_html/johan
+      - name: 📤 Déployer via FTP
+        uses: sebastianpopp/ftp-action@releases/v2
+        with:
+          host: ${{ secrets.FTP_HOST }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          localDir: ./dist
+          remoteDir: /public_html/johan
