@@ -24,5 +24,3 @@
 /assets/vendor/
 ###< symfony/asset-mapper ###
 /bin/tailwindcss
-
-package-lock.json
