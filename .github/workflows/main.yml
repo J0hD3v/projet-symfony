@@ -77,7 +77,7 @@ jobs:
           wait-on-timeout: 60
 
 deploy:
-  needs: test
+  needs: Symfony-test
   runs-on: ubuntu-latest
 
   steps:
